@@ -35,6 +35,8 @@ interface GqlReview {
   state: ReviewState;
 }
 
+type Review = Omit<GqlReview, "updatedAt"> & Record<"updatedAt", number>;
+
 interface GqlResult {
   repository: {
     pullRequest: {
@@ -142,7 +144,7 @@ export async function run(): Promise<void> {
       })
     );
 
-    const byName: Record<string, typeof reviews> = {};
+    const byName: Record<string, Review[]> = {};
     reviews.forEach((r) => {
       // Only perocess reviews if the author was not rerequested
       if (
@@ -155,13 +157,13 @@ export async function run(): Promise<void> {
       }
     });
 
-    const lasts: typeof reviews = [];
+    const lasts: Review[] = [];
     Object.entries(byName).forEach(([, revs]) => {
-      lasts.push(revs.sort((a, b) => a.updatedAt - b.updatedAt)[0]);
+      lasts.push(revs.sort((a, b) => b.updatedAt - a.updatedAt)[0]);
     });
     trace("Last Reviews Per Author: %O", lasts);
 
-    const res: Record<string, Omit<GqlReview, "updatedAt">[]> = {};
+    const res: Record<string, Review[]> = {};
     Object.values(ReviewState).forEach((s) => {
       res[s.toLowerCase()] = lasts.filter((l) => l.state === s);
     });
@@ -170,7 +172,6 @@ export async function run(): Promise<void> {
     trace("Result Data: %O", res);
 
     info("Pull request info");
-
     info(`Reviews Given: ${lasts.length}`);
     setOutput("reviews", lasts.length);
     info(`Requested Remaining: ${requested.length}`);

@@ -18536,7 +18536,7 @@ async function run() {
         });
         const lasts = [];
         Object.entries(byName).forEach(([, revs]) => {
-            lasts.push(revs.sort((a, b) => a.updatedAt - b.updatedAt)[0]);
+            lasts.push(revs.sort((a, b) => b.updatedAt - a.updatedAt)[0]);
         });
         trace("Last Reviews Per Author: %O", lasts);
         const res = {};
