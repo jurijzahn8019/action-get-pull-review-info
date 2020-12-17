@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.2](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.1...v0.0.2) (2020-12-17)
+
+
+### Bug Fixes
+
+* **action:** bad sort comparison ([350e04d](https://github.com/jurijzahn8019/action-get-pull-review-info/commit/350e04d142a2a4c505503a3137a1d7000e80fc8f))
+
 ### 0.0.1 (2020-12-17)
 
 
