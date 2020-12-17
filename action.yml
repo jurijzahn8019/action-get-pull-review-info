@@ -1,0 +1,140 @@
+name: "Is issue on a project board"
+description: |
+  This action will make a graphql query and determine whether an issue or pull request
+  Is already added to the project board identified by the name of the board
+inputs:
+  token:
+    description: "Github PAT with organization scope, e.g. secrets.GH_TOKEN"
+    required: true
+  owner:
+    description: "The organization/user owns the repository, default from event data"
+    required: false
+  number:
+    description: "Pull request number to look for, default from event data"
+    required: false
+  repo:
+    description: |
+      the repo name (reponame in the owner scope without owner path)
+      where the pull request is located, default from event data
+    required: false
+  collaborators:
+    description: |
+      This can be one or multiple of: 'COLLABORATOR', 'CONTRIBUTOR', 'FIRST_TIME_CONTRIBUTOR', 'FIRST_TIMER', 'MEMBER', 'OWNER', 'NONE'
+
+      Multiple values are to be separated by `,` (comma). For example: `COLLABORATOR,CONTRIBUTOR`, Defaults to All possible
+
+      This can be used to perform extra calculations only for given collaborator associations
+    required: false
+outputs:
+  requested:
+    description: |
+      Count if the Reamining Review Requestes of the Pull Reqeuest.
+      This will be 0 when all requested Peoples (Teams) have given their
+      Reviews
+  reviews:
+    description: |
+      Count of the given reviews in all states.
+  approved:
+    description: |
+      Overal Count of the Reviews with Approvals
+  changes_requested:
+    description: |
+      Overal Count of the Reviews wich Requests changes
+  commented:
+    description: |
+      Overal Count of the Reviews with only comments
+  dismissed:
+    description: |
+      Overal Count of the Dismissed Reviews
+  pending:
+    description: |
+      Overal Count of the Pending Reviews
+
+  approved_collaborators:
+    description: Detail status by Allowed Author Associations
+  approved_collaborator:
+    description: Detail status by Author Association
+  approved_contributor:
+    description: Detail status by Author Association
+  approved_first_time_contributor:
+    description: Detail status by Author Association
+  approved_first_timer:
+    description: Detail status by Author Association
+  approved_member:
+    description: Detail status by Author Association
+  approved_owner:
+    description: Detail status by Author Association
+  approved_none:
+    description: Detail status by Author Association
+
+  changes_requested_collaborators:
+    description: Detail status by Allowed Author Associations
+  changes_requested_collaborator:
+    description: Detail status by Author Association
+  changes_requested_contributor:
+    description: Detail status by Author Association
+  changes_requested_first_time_contributor:
+    description: Detail status by Author Association
+  changes_requested_first_timer:
+    description: Detail status by Author Association
+  changes_requested_member:
+    description: Detail status by Author Association
+  changes_requested_owner:
+    description: Detail status by Author Association
+  changes_requested_none:
+    description: Detail status by Author Association
+
+  commented_collaborators:
+    description: Detail status by Allowed Author Associations
+  commented_collaborator:
+    description: Detail status by Author Association
+  commented_contributor:
+    description: Detail status by Author Association
+  commented_first_time_contributor:
+    description: Detail status by Author Association
+  commented_first_timer:
+    description: Detail status by Author Association
+  commented_member:
+    description: Detail status by Author Association
+  commented_owner:
+    description: Detail status by Author Association
+  commented_none:
+    description: Detail status by Author Association
+
+  dismissed_collaborators:
+    description: Detail status by Allowed Author Associations
+  dismissed_collaborator:
+    description: Detail status by Author Association
+  dismissed_contributor:
+    description: Detail status by Author Association
+  dismissed_first_time_contributor:
+    description: Detail status by Author Association
+  dismissed_first_timer:
+    description: Detail status by Author Association
+  dismissed_member:
+    description: Detail status by Author Association
+  dismissed_owner:
+    description: Detail status by Author Association
+  dismissed_none:
+    description: Detail status by Author Association
+
+  pending_collaborators:
+    description: Detail status by Allowed Author Associations
+  pending_collaborator:
+    description: Detail status by Author Association
+  pending_contributor:
+    description: Detail status by Author Association
+  pending_first_time_contributor:
+    description: Detail status by Author Association
+  pending_first_timer:
+    description: Detail status by Author Association
+  pending_member:
+    description: Detail status by Author Association
+  pending_owner:
+    description: Detail status by Author Association
+  pending_none:
+    description: Detail status by Author Association
+
+runs:
+  using: "node12"
+  main: "dist/index.cjs.js"
