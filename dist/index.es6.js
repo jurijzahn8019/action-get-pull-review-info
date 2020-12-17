@@ -18551,14 +18551,14 @@ async function run() {
         core.info(`Requested Remaining: ${requested.length}`);
         core.setOutput("requested", requested.length);
         Object.entries(res).forEach(([state, revs]) => {
-            core.info(`${state}: ${requested.length}`);
+            core.info(`${state}: ${revs.length}`);
             core.setOutput(state, revs.length);
             Object.values(CommentAuthorAssociation).forEach((type) => {
                 const count = revs.filter((r) => r.authorAssociation === type).length;
                 core.setOutput(`${state}_${type.toLowerCase()}`, count);
             });
             const bycols = revs.filter((r) => collaborators.includes(r.authorAssociation)).length;
-            core.info(`${state} for Allowed Collaborators: ${requested.length}`);
+            core.info(`${state} for Allowed Collaborators: ${bycols}`);
             core.setOutput(`${state}_collaborators`, bycols);
         });
         core.info("Done");

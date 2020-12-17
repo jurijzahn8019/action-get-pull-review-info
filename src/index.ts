@@ -177,7 +177,7 @@ export async function run(): Promise<void> {
     setOutput("requested", requested.length);
 
     Object.entries(res).forEach(([state, revs]) => {
-      info(`${state}: ${requested.length}`);
+      info(`${state}: ${revs.length}`);
       setOutput(state, revs.length);
 
       Object.values(CommentAuthorAssociation).forEach((type) => {
@@ -190,7 +190,7 @@ export async function run(): Promise<void> {
         collaborators.includes(r.authorAssociation)
       ).length;
 
-      info(`${state} for Allowed Collaborators: ${requested.length}`);
+      info(`${state} for Allowed Collaborators: ${bycols}`);
       setOutput(`${state}_collaborators`, bycols);
     });
     info("Done");
