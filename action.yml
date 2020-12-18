@@ -1,10 +1,8 @@
-name: "Is issue on a project board"
-description: |
-  This action will make a graphql query and determine whether an issue or pull request
-  Is already added to the project board identified by the name of the board
+name: "Get pull requets review info"
+description: Action to retrieve review data for a pull request.
 inputs:
   token:
-    description: "Github PAT with organization scope, e.g. secrets.GH_TOKEN"
+    description: Github repo token, usually `secrets.GITHUB_TOKEN`
     required: true
   owner:
     description: "The organization/user owns the repository, default from event data"

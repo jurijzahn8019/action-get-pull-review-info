@@ -3,8 +3,9 @@
 [![Coverage Status](https://coveralls.io/repos/github/jurijzahn8019/action-get-pull-review-info/badge.svg?branch=main)](https://coveralls.io/github/jurijzahn8019/action-get-pull-review-info?branch=main)
 ![Build and Test Code](https://github.com/jurijzahn8019/action-get-pull-review-info/workflows/Build%20and%20Test%20Code/badge.svg)
 
-Action to retrieve review data for a pull request heavily inspired by:
-<https://github.com/jrylan/github-action-reviews-counter>
+Action to retrieve review data for a pull request.
+
+Heavily inspired by: <https://github.com/jrylan/github-action-reviews-counter>
 
 The differences are:
 
@@ -16,7 +17,7 @@ The differences are:
 
 ### `token`
 
-**Required** Github PAT with organization scope, e.g. secrets.GH_TOKEN
+**Required** Github repo token, usually `secrets.GITHUB_TOKEN`
 
 ### `owner`
 
@@ -86,33 +87,70 @@ which is defined by `collaborators` input. If no collaborators specified will eq
 
 ## Example usage
 
+Process Pull request if all reviews are submitted and positive
+
 ```yaml
-name: User was Assigned to Issue
+name: Pull Request Approval
 on:
-  issues: [opened, reopened]
+  pull_request_review:
+    types: [edited, dismissed, submitted]
 
 jobs:
-  do-something:
+  process:
     steps:
-      # Pass Inputs directly
-      - uses: jurijzahn8019/action-get-pull-review-info@v0.0.1
+      - uses: jurijzahn8019/action-get-pull-review-info@v0.0.3
         id: checker
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Do Something if all reviews were given and positive
+        if: >-
+          ${{
+            steps.checker.outputs.requested < 1 
+            && steps.checker.outputs.approved > 0
+            && steps.reviews.outputs.changes_requested < 1
+          }}
+        run: |
+          echo "do something with the pull request"
+```
+
+Other examples how to modify a PR
+
+```yaml
+name: Pull Request Review
+on:
+  pull_request_target:
+    types: [review_requested, review_request_removed, ready_for_review]
+
+jobs:
+  process:
+    steps:
+      # You can also pass all required inputs as options
+      - uses: jurijzahn8019/action-get-pull-review-info@v0.0.3
+        id: checker
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
-          number: ${{ github.event.issue.number }}
+          number: ${{ github.event.pull_request.number }}
 
-      # Use Event Data
-      - uses: jurijzahn8019/action-get-pull-review-info@v0.0.1
-        id: checker
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-
-      - name: Do Something if all reviews were given
-        if: ${{ steps.checker.outputs.requested < 1 }}
+      - name: Do Something if all reviews were given regardless their state
+        if: >-
+          ${{
+            steps.checker.outputs.requested < 1 
+            && steps.checker.outputs.reviews > 0
+          }}
         run: |
-          do something with the pull request
+          echo "do something with the pull request"
+
+      - name: Move Pull back into Progress because there are no Reviewers assigned
+        if: >-
+          ${{
+            steps.checker.outputs.requested < 1 
+            && steps.checker.outputs.reviews < 1
+          }}
+        run: |
+          echo "do something with the pull request"
 ```
 
 ## Test run
