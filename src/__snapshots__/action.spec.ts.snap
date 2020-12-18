@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`index run Happy Path: Info 1`] = `
+exports[`action run Happy Path: Info 1`] = `
 Array [
   "Pull request info",
   "Reviews Given: 2",
@@ -19,7 +19,7 @@ Array [
 ]
 `;
 
-exports[`index run Happy Path: setOutput 1`] = `
+exports[`action run Happy Path: setOutput 1`] = `
 Array [
   "reviews, 2",
   "requested, 1",
@@ -71,7 +71,7 @@ Array [
 ]
 `;
 
-exports[`index run Should handle no data: setOutput 1`] = `
+exports[`action run Should handle no data: setOutput 1`] = `
 Array [
   "reviews, 0",
   "requested, 0",
@@ -123,7 +123,7 @@ Array [
 ]
 `;
 
-exports[`index run Should use inputs: setOutput 1`] = `
+exports[`action run Should use inputs: setOutput 1`] = `
 Array [
   "reviews, 2",
   "requested, 1",

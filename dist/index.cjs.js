@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 var require$$0$1 = require('os');
 var fs_1 = require('fs');
 var require$$1$1 = require('path');
@@ -18459,13 +18457,15 @@ if (typeof process === 'undefined' || process.type === 'renderer' || process.bro
 /* eslint-disable camelcase */
 const dbg = src("action-get-pull-review-info:index:debug");
 const trace = src("action-get-pull-review-info:index:trace");
+var ReviewState;
 (function (ReviewState) {
     ReviewState["APPROVED"] = "APPROVED";
     ReviewState["CHANGES_REQUESTED"] = "CHANGES_REQUESTED";
     ReviewState["COMMENTED"] = "COMMENTED";
     ReviewState["DISMISSED"] = "DISMISSED";
     ReviewState["PENDING"] = "PENDING";
-})(exports.ReviewState || (exports.ReviewState = {}));
+})(ReviewState || (ReviewState = {}));
+var CommentAuthorAssociation;
 (function (CommentAuthorAssociation) {
     CommentAuthorAssociation["COLLABORATOR"] = "COLLABORATOR";
     CommentAuthorAssociation["CONTRIBUTOR"] = "CONTRIBUTOR";
@@ -18474,7 +18474,7 @@ const trace = src("action-get-pull-review-info:index:trace");
     CommentAuthorAssociation["MEMBER"] = "MEMBER";
     CommentAuthorAssociation["OWNER"] = "OWNER";
     CommentAuthorAssociation["NONE"] = "NONE";
-})(exports.CommentAuthorAssociation || (exports.CommentAuthorAssociation = {}));
+})(CommentAuthorAssociation || (CommentAuthorAssociation = {}));
 async function run() {
     var _a, _b;
     dbg("Retrieve pull request info");
@@ -18500,8 +18500,8 @@ async function run() {
             ? collaborators_input.split(",").map((i) => i.trim())
             : [];
         const collaborators = collaborators_array.length > 0
-            ? Object.values(exports.CommentAuthorAssociation).filter((a) => collaborators_input.includes(a))
-            : Object.values(exports.CommentAuthorAssociation);
+            ? Object.values(CommentAuthorAssociation).filter((a) => collaborators_input.includes(a))
+            : Object.values(CommentAuthorAssociation);
         dbg("Inputs: %s, %s, %d, %s", owner, repo, number, collaborators);
         if (!owner || !repo || !number) {
             throw new Error("Failed to retrieve required parameters");
@@ -18558,7 +18558,7 @@ async function run() {
         });
         trace("Last Reviews Per Author: %O", lasts);
         const res = {};
-        Object.values(exports.ReviewState).forEach((s) => {
+        Object.values(ReviewState).forEach((s) => {
             res[s.toLowerCase()] = lasts.filter((l) => l.state === s);
         });
         dbg("Process Result");
@@ -18571,7 +18571,7 @@ async function run() {
         Object.entries(res).forEach(([state, revs]) => {
             core.info(`${state}: ${revs.length}`);
             core.setOutput(state, revs.length);
-            Object.values(exports.CommentAuthorAssociation).forEach((type) => {
+            Object.values(CommentAuthorAssociation).forEach((type) => {
                 const count = revs.filter((r) => r.authorAssociation === type).length;
                 core.setOutput(`${state}_${type.toLowerCase()}`, count);
             });
@@ -18586,7 +18586,7 @@ async function run() {
         core.setFailed(e.message);
     }
 }
+
 var index = run();
 
-exports.default = index;
-exports.run = run;
+module.exports = index;
