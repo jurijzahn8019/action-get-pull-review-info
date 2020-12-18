@@ -79,12 +79,14 @@ export async function run(): Promise<void> {
     const token = getInput("token", { required: true });
     const owner =
       getInput("owner", { required: false }) || event?.repository.owner.login;
-    const number_input = getInput("number", { required: false });
     const repo =
       getInput("repo", { required: false }) || event?.repository.name;
+
+    const number_input = getInput("number", { required: false });
     const number = number_input
       ? Number.parseInt(number_input, 10)
       : event?.pull_request.number;
+
     const collaborators_input = getInput("collaborators");
     const collaborators_array = collaborators_input
       ? collaborators_input.split(",").map((i) => i.trim())
@@ -127,7 +129,7 @@ export async function run(): Promise<void> {
             }
           }
         }
-      }    
+      }
     `;
 
     dbg("Fetch data");

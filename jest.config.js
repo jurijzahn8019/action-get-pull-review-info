@@ -31,7 +31,7 @@ module.exports = {
     "node_modules",
     "__fixtures__",
     ".*\\.i?spec\\.(t|j)sx?$",
-    "src/test/.*"
+    "src/test/.*",
   ],
 
   // A list of reporter names that Jest uses when writing coverage reports
@@ -87,11 +87,7 @@ module.exports = {
 
   // A preset that is used as a base for Jest's configuration
   preset: "ts-jest",
-  globals: {
-    "ts-jest": {
-      isolatedModules: true
-    }
-  },
+  globals: { "ts-jest": { isolatedModules: true } },
 
   // Run tests from one or more projects
   // projects: null,
@@ -152,7 +148,7 @@ module.exports = {
   // ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
-  testRegex: ["(?<!dist\\/)src\\/(?!test).+\\.(test|spec)\\.(t|j)sx?$"]
+  testRegex: ["(?<!dist\\/)src\\/(?!test).+\\.(test|spec)\\.(t|j)sx?$"],
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,

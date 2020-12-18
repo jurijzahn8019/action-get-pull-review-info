@@ -1,5 +1,7 @@
 # action-get-pull-review-info
 
+[![Coverage Status](https://coveralls.io/repos/github/jurijzahn8019/action-get-pull-review-info/badge.svg?branch=main)](https://coveralls.io/github/jurijzahn8019/action-get-pull-review-info?branch=main)
+
 Action to retrieve review data for a pull request heavily inspired by:
 <https://github.com/jrylan/github-action-reviews-counter>
 

@@ -3,6 +3,8 @@ name: Create Tag Cron
 on:
   schedule:
     - cron: '0 18 * * 1'
+  repository_dispatch:
+    types: [tag-if-commits]
 
   # For Testing
   # push: { branches: [main] }

@@ -18490,8 +18490,8 @@ async function run() {
         dbg("Retrieve inputs");
         const token = core.getInput("token", { required: true });
         const owner = core.getInput("owner", { required: false }) || (event === null || event === void 0 ? void 0 : event.repository.owner.login);
-        const number_input = core.getInput("number", { required: false });
         const repo = core.getInput("repo", { required: false }) || (event === null || event === void 0 ? void 0 : event.repository.name);
+        const number_input = core.getInput("number", { required: false });
         const number = number_input
             ? Number.parseInt(number_input, 10)
             : event === null || event === void 0 ? void 0 : event.pull_request.number;
@@ -18530,7 +18530,7 @@ async function run() {
             }
           }
         }
-      }    
+      }
     `;
         dbg("Fetch data");
         const params = { query, owner, number, repo };
