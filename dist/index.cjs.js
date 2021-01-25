@@ -15590,7 +15590,7 @@ function withDefaults$2(request$1, newDefaults) {
     });
 }
 
-const graphql$1 = withDefaults$2(request, {
+withDefaults$2(request, {
     headers: {
         "user-agent": `octokit-graphql.js/${VERSION$2} ${getUserAgent()}`,
     },
