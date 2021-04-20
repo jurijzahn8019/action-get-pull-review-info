@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.17](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.16...v0.0.17) (2021-04-20)
+
+
+### Bug Fixes
+
+* **action:** properly handle missing team info ([9ab8854](https://github.com/jurijzahn8019/action-get-pull-review-info/commit/9ab88549c6d448dce5a422f8e6d8e90ea19653e5))
+
 ### [0.0.16](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.15...v0.0.16) (2021-03-15)
 
 ### [0.0.15](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.14...v0.0.15) (2021-03-08)
