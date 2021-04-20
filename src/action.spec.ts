@@ -207,5 +207,79 @@ describe("action", () => {
         "setOutput"
       );
     });
+
+    it("Should handle inaccessible data", async () => {
+      octokit.graphql.mockResolvedValue({
+        repository: {
+          pullRequest: {
+            reviewRequests: {
+              nodes: [
+                { requestedReviewer: null },
+                { requestedReviewer: { name: "bim44666" } },
+              ],
+            },
+            reviews: {
+              nodes: [
+                {
+                  author: {
+                    name: "bim44666",
+                  },
+                  updatedAt: "2020-12-16T14:15:43Z",
+                  authorAssociation: "NONE",
+                  state: "CHANGES_REQUESTED",
+                },
+                {
+                  author: {
+                    name: "foobar5344",
+                  },
+                  updatedAt: "2020-12-16T14:17:14Z",
+                  authorAssociation: "FIRST_TIMER",
+                  state: "CHANGES_REQUESTED",
+                },
+                {
+                  author: {
+                    name: "bazbar634",
+                  },
+                  updatedAt: "2020-12-16T14:55:57Z",
+                  authorAssociation: "CONTRIBUTOR",
+                  state: "COMMENTED",
+                },
+                {
+                  author: {
+                    name: "bazbar634",
+                  },
+                  updatedAt: "2020-12-17T07:10:16Z",
+                  authorAssociation: "CONTRIBUTOR",
+                  state: "DISMISSED",
+                },
+                {
+                  author: {
+                    name: "bazbar634",
+                  },
+                  updatedAt: "2020-12-17T07:11:08Z",
+                  authorAssociation: "CONTRIBUTOR",
+                  state: "COMMENTED",
+                },
+                {
+                  author: {
+                    name: "bazbar634",
+                  },
+                  updatedAt: "2020-12-17T07:51:47Z",
+                  authorAssociation: "CONTRIBUTOR",
+                  state: "CHANGES_REQUESTED",
+                },
+              ],
+            },
+          },
+        },
+      });
+
+      await expect(run()).resolves.toBeUndefined();
+
+      expect(setFailedMock).not.toBeCalled();
+      expect(setOutputMock.mock.calls.map((c) => c.join(", "))).toMatchSnapshot(
+        "setOutput"
+      );
+    });
   });
 });

@@ -42,7 +42,7 @@ interface GqlResult {
     pullRequest: {
       reviewRequests?: {
         nodes: {
-          requestedReviewer: { name: string };
+          requestedReviewer?: { name: string };
         }[];
       };
       reviews: {
@@ -150,7 +150,7 @@ export async function run(): Promise<void> {
     reviews.forEach((r) => {
       // Only perocess reviews if the author was not rerequested
       if (
-        !requested.find((rq) => rq.requestedReviewer.name === r.author.name)
+        !requested.find((rq) => rq.requestedReviewer?.name === r.author.name)
       ) {
         if (!byName[r.author.name]) {
           byName[r.author.name] = [];
