@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.22](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.21...v0.0.22) (2021-06-07)
+
+
+### Bug Fixes
+
+* **action:** ignore comments for prs, becaue they can interfere with changes requested ([#265](https://github.com/jurijzahn8019/action-get-pull-review-info/issues/265)) ([ef30b3d](https://github.com/jurijzahn8019/action-get-pull-review-info/commit/ef30b3d623f238a2dd9eaf16a180be915ba33206))
+
 ### [0.0.21](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.20...v0.0.21) (2021-05-17)
 
 ### [0.0.20](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.19...v0.0.20) (2021-05-10)
