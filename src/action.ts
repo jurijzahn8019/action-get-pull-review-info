@@ -147,17 +147,20 @@ export async function run(): Promise<void> {
     );
 
     const byName: Record<string, Review[]> = {};
-    reviews.forEach((r) => {
+    reviews
+      // Ignore comments, they are not decision relevant
+      .filter((r) => r.state !== ReviewState.COMMENTED)
       // Only perocess reviews if the author was not rerequested
-      if (
-        !requested.find((rq) => rq.requestedReviewer?.name === r.author.name)
-      ) {
+      .filter(
+        (r) =>
+          !requested.find((rq) => rq.requestedReviewer?.name === r.author.name)
+      )
+      .forEach((r) => {
         if (!byName[r.author.name]) {
           byName[r.author.name] = [];
         }
         byName[r.author.name].push(r);
-      }
-    });
+      });
 
     const lasts: Review[] = [];
     Object.entries(byName).forEach(([, revs]) => {
@@ -198,7 +201,8 @@ export async function run(): Promise<void> {
     });
     info("Done");
   } catch (e) {
-    dbg("Failed:", e);
-    setFailed(e.message);
+    const err = e as Error;
+    dbg("Failed:", err);
+    setFailed(err.message);
   }
 }
