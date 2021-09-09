@@ -2060,7 +2060,7 @@ function withDefaults$2(oldDefaults, newDefaults) {
     });
 }
 
-const VERSION$5 = "6.0.11";
+const VERSION$5 = "6.0.12";
 
 const userAgent = `octokit-endpoint.js/${VERSION$5} ${getUserAgent()}`;
 // DEFAULTS has all properties set that EndpointOptions has, except url.
@@ -2220,9 +2220,10 @@ var string_decoder = {};
 
 var safeBuffer = {exports: {}};
 
-/* eslint-disable node/no-deprecated-api */
+/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
 (function (module, exports) {
+/* eslint-disable node/no-deprecated-api */
 var buffer = require$$0__default$1['default'];
 var Buffer = buffer.Buffer;
 
@@ -2243,6 +2244,8 @@ if (Buffer.from && Buffer.alloc && Buffer.allocUnsafe && Buffer.allocUnsafeSlow)
 function SafeBuffer (arg, encodingOrOffset, length) {
   return Buffer(arg, encodingOrOffset, length)
 }
+
+SafeBuffer.prototype = Object.create(Buffer.prototype);
 
 // Copy static methods from Buffer
 copyProps(Buffer, SafeBuffer);
@@ -13304,7 +13307,19 @@ var dbcsData = {
     'big5hkscs': {
         type: '_dbcs',
         table: function() { return require$$6.concat(require$$7) },
-        encodeSkipVals: [0xa2cc],
+        encodeSkipVals: [
+            // Although Encoding Standard says we should avoid encoding to HKSCS area (See Step 1 of
+            // https://encoding.spec.whatwg.org/#index-big5-pointer), we still do it to increase compatibility with ICU.
+            // But if a single unicode point can be encoded both as HKSCS and regular Big5, we prefer the latter.
+            0x8e69, 0x8e6f, 0x8e7e, 0x8eab, 0x8eb4, 0x8ecd, 0x8ed0, 0x8f57, 0x8f69, 0x8f6e, 0x8fcb, 0x8ffe,
+            0x906d, 0x907a, 0x90c4, 0x90dc, 0x90f1, 0x91bf, 0x92af, 0x92b0, 0x92b1, 0x92b2, 0x92d1, 0x9447, 0x94ca,
+            0x95d9, 0x96fc, 0x9975, 0x9b76, 0x9b78, 0x9b7b, 0x9bc6, 0x9bde, 0x9bec, 0x9bf6, 0x9c42, 0x9c53, 0x9c62,
+            0x9c68, 0x9c6b, 0x9c77, 0x9cbc, 0x9cbd, 0x9cd0, 0x9d57, 0x9d5a, 0x9dc4, 0x9def, 0x9dfb, 0x9ea9, 0x9eef,
+            0x9efd, 0x9f60, 0x9fcb, 0xa077, 0xa0dc, 0xa0df, 0x8fcc, 0x92c8, 0x9644, 0x96ed,
+
+            // Step 2 of https://encoding.spec.whatwg.org/#index-big5-pointer: Use last pointer for U+2550, U+255E, U+2561, U+256A, U+5341, or U+5345
+            0xa2a4, 0xa2a5, 0xa2a7, 0xa2a6, 0xa2cc, 0xa2ce,
+        ],
     },
 
     'cnbig5': 'big5hkscs',
@@ -15454,7 +15469,8 @@ function onceStrict (fn) {
 
 var once$1 = once$2.exports;
 
-const logOnce = once$1((deprecation) => console.warn(deprecation));
+const logOnceCode = once$1((deprecation) => console.warn(deprecation));
+const logOnceHeaders = once$1((deprecation) => console.warn(deprecation));
 /**
  * Error with extra properties to help with debugging
  */
@@ -15468,13 +15484,14 @@ class RequestError extends Error {
         }
         this.name = "HttpError";
         this.status = statusCode;
-        Object.defineProperty(this, "code", {
-            get() {
-                logOnce(new Deprecation("[@octokit/request-error] `error.code` is deprecated, use `error.status`."));
-                return statusCode;
-            },
-        });
-        this.headers = options.headers || {};
+        let headers;
+        if ("headers" in options && typeof options.headers !== "undefined") {
+            headers = options.headers;
+        }
+        if ("response" in options) {
+            this.response = options.response;
+            headers = options.response.headers;
+        }
         // redact request credentials without mutating original request options
         const requestCopy = Object.assign({}, options.request);
         if (options.request.headers.authorization) {
@@ -15490,10 +15507,23 @@ class RequestError extends Error {
             // see https://developer.github.com/v3/#oauth2-token-sent-in-a-header
             .replace(/\baccess_token=\w+/g, "access_token=[REDACTED]");
         this.request = requestCopy;
+        // deprecations
+        Object.defineProperty(this, "code", {
+            get() {
+                logOnceCode(new Deprecation("[@octokit/request-error] `error.code` is deprecated, use `error.status`."));
+                return statusCode;
+            },
+        });
+        Object.defineProperty(this, "headers", {
+            get() {
+                logOnceHeaders(new Deprecation("[@octokit/request-error] `error.headers` is deprecated, use `error.response.headers`."));
+                return headers || {};
+            },
+        });
     }
 }
 
-const VERSION$4 = "5.5.0";
+const VERSION$4 = "5.6.1";
 
 function getBufferResponse(response) {
     return response.arrayBuffer();
@@ -15520,7 +15550,7 @@ function fetchWrapper(requestOptions) {
     // `requestOptions.request.agent` type is incompatible
     // see https://github.com/octokit/types.ts/pull/264
     requestOptions.request))
-        .then((response) => {
+        .then(async (response) => {
         url = response.url;
         status = response.status;
         for (const keyAndValue of response.headers) {
@@ -15540,46 +15570,40 @@ function fetchWrapper(requestOptions) {
                 return;
             }
             throw new RequestError(response.statusText, status, {
-                headers,
+                response: {
+                    url,
+                    status,
+                    headers,
+                    data: undefined,
+                },
                 request: requestOptions,
             });
         }
         if (status === 304) {
             throw new RequestError("Not modified", status, {
-                headers,
+                response: {
+                    url,
+                    status,
+                    headers,
+                    data: await getResponseData(response),
+                },
                 request: requestOptions,
             });
         }
         if (status >= 400) {
-            return response
-                .text()
-                .then((message) => {
-                const error = new RequestError(message, status, {
+            const data = await getResponseData(response);
+            const error = new RequestError(toErrorMessage(data), status, {
+                response: {
+                    url,
+                    status,
                     headers,
-                    request: requestOptions,
-                });
-                try {
-                    let responseBody = JSON.parse(error.message);
-                    Object.assign(error, responseBody);
-                    let errors = responseBody.errors;
-                    // Assumption `errors` would always be in Array format
-                    error.message =
-                        error.message + ": " + errors.map(JSON.stringify).join(", ");
-                }
-                catch (e) {
-                    // ignore, see octokit/rest.js#684
-                }
-                throw error;
+                    data,
+                },
+                request: requestOptions,
             });
+            throw error;
         }
-        const contentType = response.headers.get("content-type");
-        if (/application\/json/.test(contentType)) {
-            return response.json();
-        }
-        if (!contentType || /^text\/|charset=utf-8$/.test(contentType)) {
-            return response.text();
-        }
-        return getBufferResponse(response);
+        return getResponseData(response);
     })
         .then((data) => {
         return {
@@ -15590,14 +15614,35 @@ function fetchWrapper(requestOptions) {
         };
     })
         .catch((error) => {
-        if (error instanceof RequestError) {
+        if (error instanceof RequestError)
             throw error;
-        }
         throw new RequestError(error.message, 500, {
-            headers,
             request: requestOptions,
         });
     });
+}
+async function getResponseData(response) {
+    const contentType = response.headers.get("content-type");
+    if (/application\/json/.test(contentType)) {
+        return response.json();
+    }
+    if (!contentType || /^text\/|charset=utf-8$/.test(contentType)) {
+        return response.text();
+    }
+    return getBufferResponse(response);
+}
+function toErrorMessage(data) {
+    if (typeof data === "string")
+        return data;
+    // istanbul ignore else - just in case
+    if ("message" in data) {
+        if (Array.isArray(data.errors)) {
+            return `${data.message}: ${data.errors.map(JSON.stringify).join(", ")}`;
+        }
+        return data.message;
+    }
+    // istanbul ignore next - just in case
+    return `Unknown error: ${JSON.stringify(data)}`;
 }
 
 function withDefaults$1(oldEndpoint, newDefaults) {
@@ -15628,16 +15673,22 @@ const request = withDefaults$1(endpoint, {
     },
 });
 
-const VERSION$3 = "4.6.2";
+const VERSION$3 = "4.8.0";
 
-class GraphqlError extends Error {
-    constructor(request, response) {
-        const message = response.data.errors[0].message;
-        super(message);
-        Object.assign(this, response.data);
-        Object.assign(this, { headers: response.headers });
-        this.name = "GraphqlError";
+function _buildMessageForResponseErrors(data) {
+    return (`Request failed due to following response errors:\n` +
+        data.errors.map((e) => ` - ${e.message}`).join("\n"));
+}
+class GraphqlResponseError extends Error {
+    constructor(request, headers, response) {
+        super(_buildMessageForResponseErrors(response));
         this.request = request;
+        this.headers = headers;
+        this.response = response;
+        this.name = "GraphqlResponseError";
+        // Expose the errors and response data in their shorthand properties.
+        this.errors = response.errors;
+        this.data = response.data;
         // Maintains proper stack trace (only available on V8)
         /* istanbul ignore next */
         if (Error.captureStackTrace) {
@@ -15692,10 +15743,7 @@ function graphql(request, query, options) {
             for (const key of Object.keys(response.headers)) {
                 headers[key] = response.headers[key];
             }
-            throw new GraphqlError(requestOptions, {
-                headers,
-                data: response.data,
-            });
+            throw new GraphqlResponseError(requestOptions, headers, response.data);
         }
         return response.data.data;
     });
@@ -15770,7 +15818,7 @@ const createTokenAuth = function createTokenAuth(token) {
     });
 };
 
-const VERSION$2 = "3.4.0";
+const VERSION$2 = "3.5.1";
 
 class Octokit {
     constructor(options = {}) {
@@ -16151,6 +16199,7 @@ const Endpoints = {
         ],
         getUserInstallation: ["GET /users/{username}/installation"],
         getWebhookConfigForApp: ["GET /app/hook/config"],
+        getWebhookDelivery: ["GET /app/hook/deliveries/{delivery_id}"],
         listAccountsForPlan: ["GET /marketplace_listing/plans/{plan_id}/accounts"],
         listAccountsForPlanStubbed: [
             "GET /marketplace_listing/stubbed/plans/{plan_id}/accounts",
@@ -16166,6 +16215,10 @@ const Endpoints = {
         listSubscriptionsForAuthenticatedUser: ["GET /user/marketplace_purchases"],
         listSubscriptionsForAuthenticatedUserStubbed: [
             "GET /user/marketplace_purchases/stubbed",
+        ],
+        listWebhookDeliveries: ["GET /app/hook/deliveries"],
+        redeliverWebhookDelivery: [
+            "POST /app/hook/deliveries/{delivery_id}/attempts",
         ],
         removeRepoFromInstallation: [
             "DELETE /user/installations/{installation_id}/repositories/{repository_id}",
@@ -16245,14 +16298,8 @@ const Endpoints = {
         uploadSarif: ["POST /repos/{owner}/{repo}/code-scanning/sarifs"],
     },
     codesOfConduct: {
-        getAllCodesOfConduct: [
-            "GET /codes_of_conduct",
-            { mediaType: { previews: ["scarlet-witch"] } },
-        ],
-        getConductCode: [
-            "GET /codes_of_conduct/{key}",
-            { mediaType: { previews: ["scarlet-witch"] } },
-        ],
+        getAllCodesOfConduct: ["GET /codes_of_conduct"],
+        getConductCode: ["GET /codes_of_conduct/{key}"],
         getForRepo: [
             "GET /repos/{owner}/{repo}/community/code_of_conduct",
             { mediaType: { previews: ["scarlet-witch"] } },
@@ -16513,6 +16560,9 @@ const Endpoints = {
         getMembershipForUser: ["GET /orgs/{org}/memberships/{username}"],
         getWebhook: ["GET /orgs/{org}/hooks/{hook_id}"],
         getWebhookConfigForOrg: ["GET /orgs/{org}/hooks/{hook_id}/config"],
+        getWebhookDelivery: [
+            "GET /orgs/{org}/hooks/{hook_id}/deliveries/{delivery_id}",
+        ],
         list: ["GET /organizations"],
         listAppInstallations: ["GET /orgs/{org}/installations"],
         listBlockedUsers: ["GET /orgs/{org}/blocks"],
@@ -16525,8 +16575,12 @@ const Endpoints = {
         listOutsideCollaborators: ["GET /orgs/{org}/outside_collaborators"],
         listPendingInvitations: ["GET /orgs/{org}/invitations"],
         listPublicMembers: ["GET /orgs/{org}/public_members"],
+        listWebhookDeliveries: ["GET /orgs/{org}/hooks/{hook_id}/deliveries"],
         listWebhooks: ["GET /orgs/{org}/hooks"],
         pingWebhook: ["POST /orgs/{org}/hooks/{hook_id}/pings"],
+        redeliverWebhookDelivery: [
+            "POST /orgs/{org}/hooks/{hook_id}/deliveries/{delivery_id}/attempts",
+        ],
         removeMember: ["DELETE /orgs/{org}/members/{username}"],
         removeMembershipForUser: ["DELETE /orgs/{org}/memberships/{username}"],
         removeOutsideCollaborator: [
@@ -16554,11 +16608,17 @@ const Endpoints = {
         deletePackageForOrg: [
             "DELETE /orgs/{org}/packages/{package_type}/{package_name}",
         ],
+        deletePackageForUser: [
+            "DELETE /users/{username}/packages/{package_type}/{package_name}",
+        ],
         deletePackageVersionForAuthenticatedUser: [
             "DELETE /user/packages/{package_type}/{package_name}/versions/{package_version_id}",
         ],
         deletePackageVersionForOrg: [
             "DELETE /orgs/{org}/packages/{package_type}/{package_name}/versions/{package_version_id}",
+        ],
+        deletePackageVersionForUser: [
+            "DELETE /users/{username}/packages/{package_type}/{package_name}/versions/{package_version_id}",
         ],
         getAllPackageVersionsForAPackageOwnedByAnOrg: [
             "GET /orgs/{org}/packages/{package_type}/{package_name}/versions",
@@ -16602,17 +16662,26 @@ const Endpoints = {
         getPackageVersionForUser: [
             "GET /users/{username}/packages/{package_type}/{package_name}/versions/{package_version_id}",
         ],
+        listPackagesForAuthenticatedUser: ["GET /user/packages"],
+        listPackagesForOrganization: ["GET /orgs/{org}/packages"],
+        listPackagesForUser: ["GET /user/{username}/packages"],
         restorePackageForAuthenticatedUser: [
             "POST /user/packages/{package_type}/{package_name}/restore{?token}",
         ],
         restorePackageForOrg: [
             "POST /orgs/{org}/packages/{package_type}/{package_name}/restore{?token}",
         ],
+        restorePackageForUser: [
+            "POST /users/{username}/packages/{package_type}/{package_name}/restore{?token}",
+        ],
         restorePackageVersionForAuthenticatedUser: [
             "POST /user/packages/{package_type}/{package_name}/versions/{package_version_id}/restore",
         ],
         restorePackageVersionForOrg: [
             "POST /orgs/{org}/packages/{package_type}/{package_name}/versions/{package_version_id}/restore",
+        ],
+        restorePackageVersionForUser: [
+            "POST /users/{username}/packages/{package_type}/{package_name}/versions/{package_version_id}/restore",
         ],
     },
     projects: {
@@ -16895,6 +16964,7 @@ const Endpoints = {
         compareCommitsWithBasehead: [
             "GET /repos/{owner}/{repo}/compare/{basehead}",
         ],
+        createAutolink: ["POST /repos/{owner}/{repo}/autolinks"],
         createCommitComment: [
             "POST /repos/{owner}/{repo}/commits/{commit_sha}/comments",
         ],
@@ -16937,6 +17007,7 @@ const Endpoints = {
         deleteAnEnvironment: [
             "DELETE /repos/{owner}/{repo}/environments/{environment_name}",
         ],
+        deleteAutolink: ["DELETE /repos/{owner}/{repo}/autolinks/{autolink_id}"],
         deleteBranchProtection: [
             "DELETE /repos/{owner}/{repo}/branches/{branch}/protection",
         ],
@@ -17006,6 +17077,7 @@ const Endpoints = {
         getAppsWithAccessToProtectedBranch: [
             "GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps",
         ],
+        getAutolink: ["GET /repos/{owner}/{repo}/autolinks/{autolink_id}"],
         getBranch: ["GET /repos/{owner}/{repo}/branches/{branch}"],
         getBranchProtection: [
             "GET /repos/{owner}/{repo}/branches/{branch}/protection",
@@ -17065,6 +17137,10 @@ const Endpoints = {
         getWebhookConfigForRepo: [
             "GET /repos/{owner}/{repo}/hooks/{hook_id}/config",
         ],
+        getWebhookDelivery: [
+            "GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}",
+        ],
+        listAutolinks: ["GET /repos/{owner}/{repo}/autolinks"],
         listBranches: ["GET /repos/{owner}/{repo}/branches"],
         listBranchesForHeadCommit: [
             "GET /repos/{owner}/{repo}/commits/{commit_sha}/branches-where-head",
@@ -17104,9 +17180,16 @@ const Endpoints = {
         listReleases: ["GET /repos/{owner}/{repo}/releases"],
         listTags: ["GET /repos/{owner}/{repo}/tags"],
         listTeams: ["GET /repos/{owner}/{repo}/teams"],
+        listWebhookDeliveries: [
+            "GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries",
+        ],
         listWebhooks: ["GET /repos/{owner}/{repo}/hooks"],
         merge: ["POST /repos/{owner}/{repo}/merges"],
+        mergeUpstream: ["POST /repos/{owner}/{repo}/merge-upstream"],
         pingWebhook: ["POST /repos/{owner}/{repo}/hooks/{hook_id}/pings"],
+        redeliverWebhookDelivery: [
+            "POST /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}/attempts",
+        ],
         removeAppAccessRestrictions: [
             "DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps",
             {},
@@ -17210,6 +17293,7 @@ const Endpoints = {
         getAlert: [
             "GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}",
         ],
+        listAlertsForOrg: ["GET /orgs/{org}/secret-scanning/alerts"],
         listAlertsForRepo: ["GET /repos/{owner}/{repo}/secret-scanning/alerts"],
         updateAlert: [
             "PATCH /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}",
@@ -17324,7 +17408,7 @@ const Endpoints = {
     },
 };
 
-const VERSION$1 = "5.3.1";
+const VERSION$1 = "5.10.1";
 
 function endpointsToMethods(octokit, endpointsMap) {
     const newMethods = {};
@@ -17411,7 +17495,7 @@ var distWeb$1 = /*#__PURE__*/Object.freeze({
 
 var require$$3 = /*@__PURE__*/getAugmentedNamespace(distWeb$1);
 
-const VERSION = "2.13.3";
+const VERSION = "2.16.0";
 
 /**
  * Some “list” response that can be paginated have a different response structure
@@ -17430,6 +17514,13 @@ const VERSION = "2.13.3";
  * otherwise match: https://developer.github.com/v3/repos/statuses/#get-the-combined-status-for-a-specific-ref
  */
 function normalizePaginatedListResponse(response) {
+    // endpoints can respond with 204 if repository is empty
+    if (!response.data) {
+        return {
+            ...response,
+            data: [],
+        };
+    }
     const responseNeedsNormalization = "total_count" in response.data && !("url" in response.data);
     if (!responseNeedsNormalization)
         return response;
@@ -17467,13 +17558,27 @@ function iterator(octokit, route, parameters) {
             async next() {
                 if (!url)
                     return { done: true };
-                const response = await requestMethod({ method, url, headers });
-                const normalizedResponse = normalizePaginatedListResponse(response);
-                // `response.headers.link` format:
-                // '<https://api.github.com/users/aseemk/followers?page=2>; rel="next", <https://api.github.com/users/aseemk/followers?page=2>; rel="last"'
-                // sets `url` to undefined if "next" URL is not present or `link` header is not set
-                url = ((normalizedResponse.headers.link || "").match(/<([^>]+)>;\s*rel="next"/) || [])[1];
-                return { value: normalizedResponse };
+                try {
+                    const response = await requestMethod({ method, url, headers });
+                    const normalizedResponse = normalizePaginatedListResponse(response);
+                    // `response.headers.link` format:
+                    // '<https://api.github.com/users/aseemk/followers?page=2>; rel="next", <https://api.github.com/users/aseemk/followers?page=2>; rel="last"'
+                    // sets `url` to undefined if "next" URL is not present or `link` header is not set
+                    url = ((normalizedResponse.headers.link || "").match(/<([^>]+)>;\s*rel="next"/) || [])[1];
+                    return { value: normalizedResponse };
+                }
+                catch (error) {
+                    if (error.status !== 409)
+                        throw error;
+                    url = "";
+                    return {
+                        value: {
+                            status: 200,
+                            headers: {},
+                            data: [],
+                        },
+                    };
+                }
             },
         }),
     };
@@ -17508,6 +17613,7 @@ const composePaginateRest = Object.assign(paginate, {
 });
 
 const paginatingEndpoints = [
+    "GET /app/hook/deliveries",
     "GET /app/installations",
     "GET /applications/grants",
     "GET /authorizations",
@@ -17546,6 +17652,7 @@ const paginatingEndpoints = [
     "GET /orgs/{org}/events",
     "GET /orgs/{org}/failed_invitations",
     "GET /orgs/{org}/hooks",
+    "GET /orgs/{org}/hooks/{hook_id}/deliveries",
     "GET /orgs/{org}/installations",
     "GET /orgs/{org}/invitations",
     "GET /orgs/{org}/invitations/{invitation_id}/teams",
@@ -17554,9 +17661,11 @@ const paginatingEndpoints = [
     "GET /orgs/{org}/migrations",
     "GET /orgs/{org}/migrations/{migration_id}/repositories",
     "GET /orgs/{org}/outside_collaborators",
+    "GET /orgs/{org}/packages",
     "GET /orgs/{org}/projects",
     "GET /orgs/{org}/public_members",
     "GET /orgs/{org}/repos",
+    "GET /orgs/{org}/secret-scanning/alerts",
     "GET /orgs/{org}/team-sync/groups",
     "GET /orgs/{org}/teams",
     "GET /orgs/{org}/teams/{team_slug}/discussions",
@@ -17582,6 +17691,7 @@ const paginatingEndpoints = [
     "GET /repos/{owner}/{repo}/actions/workflows",
     "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs",
     "GET /repos/{owner}/{repo}/assignees",
+    "GET /repos/{owner}/{repo}/autolinks",
     "GET /repos/{owner}/{repo}/branches",
     "GET /repos/{owner}/{repo}/check-runs/{check_run_id}/annotations",
     "GET /repos/{owner}/{repo}/check-suites/{check_suite_id}/check-runs",
@@ -17605,6 +17715,7 @@ const paginatingEndpoints = [
     "GET /repos/{owner}/{repo}/forks",
     "GET /repos/{owner}/{repo}/git/matching-refs/{ref}",
     "GET /repos/{owner}/{repo}/hooks",
+    "GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries",
     "GET /repos/{owner}/{repo}/invitations",
     "GET /repos/{owner}/{repo}/issues",
     "GET /repos/{owner}/{repo}/issues/comments",
@@ -17675,12 +17786,14 @@ const paginatingEndpoints = [
     "GET /user/migrations",
     "GET /user/migrations/{migration_id}/repositories",
     "GET /user/orgs",
+    "GET /user/packages",
     "GET /user/public_emails",
     "GET /user/repos",
     "GET /user/repository_invitations",
     "GET /user/starred",
     "GET /user/subscriptions",
     "GET /user/teams",
+    "GET /user/{username}/packages",
     "GET /users",
     "GET /users/{username}/events",
     "GET /users/{username}/events/orgs/{org}",
