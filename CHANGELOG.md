@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.62](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.61...v0.0.62) (2022-03-14)
+
 ### [0.0.61](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.60...v0.0.61) (2022-03-07)
 
 ### [0.0.60](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.59...v0.0.60) (2022-02-28)
