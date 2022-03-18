@@ -87774,7 +87774,7 @@ async function run() {
         core.setOutput("requested", requested.length);
         const isMergeable = mergeable === "MERGEABLE";
         core.info(`Pull request mergeable: ${isMergeable}`);
-        core.setOutput("isMergeable", isMergeable);
+        core.setOutput("is_mergeable", isMergeable);
         core.info(`Pull request merge State: ${mergeStateStatus}`);
         core.setOutput("merge_state", mergeStateStatus);
         Object.entries(res).forEach(([state, revs]) => {

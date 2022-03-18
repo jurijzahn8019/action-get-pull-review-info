@@ -189,7 +189,7 @@ export async function run(): Promise<void> {
 
     const isMergeable = mergeable === "MERGEABLE";
     info(`Pull request mergeable: ${isMergeable}`);
-    setOutput("isMergeable", isMergeable);
+    setOutput("is_mergeable", isMergeable);
     info(`Pull request merge State: ${mergeStateStatus}`);
     setOutput("merge_state", mergeStateStatus);
 

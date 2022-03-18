@@ -25,7 +25,7 @@ exports[`action run Happy Path: setOutput 1`] = `
 Array [
   "reviews, 2",
   "requested, 1",
-  "isMergeable, true",
+  "is_mergeable, true",
   "merge_state, CLEAN",
   "approved, 0",
   "approved_collaborator, 0",
@@ -79,7 +79,7 @@ exports[`action run Should handle inaccessible data: setOutput 1`] = `
 Array [
   "reviews, 2",
   "requested, 2",
-  "isMergeable, false",
+  "is_mergeable, false",
   "merge_state, DIRTY",
   "approved, 0",
   "approved_collaborator, 0",
@@ -133,7 +133,7 @@ exports[`action run Should handle no data: setOutput 1`] = `
 Array [
   "reviews, 0",
   "requested, 0",
-  "isMergeable, false",
+  "is_mergeable, false",
   "merge_state, ",
   "approved, 0",
   "approved_collaborator, 0",
@@ -187,7 +187,7 @@ exports[`action run Should use inputs: setOutput 1`] = `
 Array [
   "reviews, 2",
   "requested, 1",
-  "isMergeable, true",
+  "is_mergeable, true",
   "merge_state, CLEAN",
   "approved, 0",
   "approved_collaborator, 0",
