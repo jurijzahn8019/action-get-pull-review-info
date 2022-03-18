@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.63](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.62...v0.0.63) (2022-03-18)
+
+
+### Features
+
+* **outputs:** add mergeability info to outputs ([09eb3d6](https://github.com/jurijzahn8019/action-get-pull-review-info/commit/09eb3d6145bf342ebf6db1df1f9371b586586f72))
+
 ### [0.0.62](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.61...v0.0.62) (2022-03-14)
 
 ### [0.0.61](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.60...v0.0.61) (2022-03-07)
