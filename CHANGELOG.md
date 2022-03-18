@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.64](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.63...v0.0.64) (2022-03-18)
+
+
+### Bug Fixes
+
+* **outputs:** fix wriong output name ([1687a58](https://github.com/jurijzahn8019/action-get-pull-review-info/commit/1687a587a3bf1137b519be5716c63f4ca823cf10))
+
 ### [0.0.63](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.62...v0.0.63) (2022-03-18)
 
 
