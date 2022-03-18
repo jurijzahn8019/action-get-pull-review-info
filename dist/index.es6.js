@@ -87006,7 +87006,7 @@ function setup(env) {
 			namespaces = split[i].replace(/\*/g, '.*?');
 
 			if (namespaces[0] === '-') {
-				createDebug.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+				createDebug.skips.push(new RegExp('^' + namespaces.slice(1) + '$'));
 			} else {
 				createDebug.names.push(new RegExp('^' + namespaces + '$'));
 			}
@@ -87727,6 +87727,8 @@ async function run() {
                 state
               }
             }
+            mergeable
+            mergeStateStatus
           }
         }
       }
@@ -87736,6 +87738,7 @@ async function run() {
         trace("Params: %O", params);
         const data = await client.graphql(params);
         trace("Data: %O", data);
+        const { mergeable, mergeStateStatus } = data.repository.pullRequest;
         const requested = ((_a = data.repository.pullRequest.reviewRequests) === null || _a === void 0 ? void 0 : _a.nodes) || [];
         const reviews = (((_b = data.repository.pullRequest.reviews) === null || _b === void 0 ? void 0 : _b.nodes) || []).map((r) => ({
             ...r,
@@ -87769,6 +87772,11 @@ async function run() {
         core.setOutput("reviews", lasts.length);
         core.info(`Requested Remaining: ${requested.length}`);
         core.setOutput("requested", requested.length);
+        const isMergeable = mergeable === "MERGEABLE";
+        core.info(`Pull request mergeable: ${isMergeable}`);
+        core.setOutput("isMergeable", isMergeable);
+        core.info(`Pull request merge State: ${mergeStateStatus}`);
+        core.setOutput("merge_state", mergeStateStatus);
         Object.entries(res).forEach(([state, revs]) => {
             core.info(`${state}: ${revs.length}`);
             core.setOutput(state, revs.length);

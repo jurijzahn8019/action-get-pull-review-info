@@ -5,6 +5,8 @@ Array [
   "Pull request info",
   "Reviews Given: 2",
   "Requested Remaining: 1",
+  "Pull request mergeable: true",
+  "Pull request merge State: CLEAN",
   "approved: 0",
   "approved for Allowed Collaborators: 0",
   "changes_requested: 2",
@@ -23,6 +25,8 @@ exports[`action run Happy Path: setOutput 1`] = `
 Array [
   "reviews, 2",
   "requested, 1",
+  "isMergeable, true",
+  "merge_state, CLEAN",
   "approved, 0",
   "approved_collaborator, 0",
   "approved_contributor, 0",
@@ -75,6 +79,8 @@ exports[`action run Should handle inaccessible data: setOutput 1`] = `
 Array [
   "reviews, 2",
   "requested, 2",
+  "isMergeable, false",
+  "merge_state, DIRTY",
   "approved, 0",
   "approved_collaborator, 0",
   "approved_contributor, 0",
@@ -127,6 +133,8 @@ exports[`action run Should handle no data: setOutput 1`] = `
 Array [
   "reviews, 0",
   "requested, 0",
+  "isMergeable, false",
+  "merge_state, ",
   "approved, 0",
   "approved_collaborator, 0",
   "approved_contributor, 0",
@@ -179,6 +187,8 @@ exports[`action run Should use inputs: setOutput 1`] = `
 Array [
   "reviews, 2",
   "requested, 1",
+  "isMergeable, true",
+  "merge_state, CLEAN",
   "approved, 0",
   "approved_collaborator, 0",
   "approved_contributor, 0",

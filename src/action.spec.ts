@@ -25,6 +25,8 @@ describe("action", () => {
     octokit.graphql.mockResolvedValue({
       repository: {
         pullRequest: {
+          mergeable: "MERGEABLE",
+          mergeStateStatus: "CLEAN",
           reviewRequests: {
             nodes: [
               {
@@ -124,6 +126,8 @@ describe("action", () => {
                 state
               }
             }
+            mergeable
+            mergeStateStatus
           }
         }
       }
@@ -181,6 +185,8 @@ describe("action", () => {
                 state
               }
             }
+            mergeable
+            mergeStateStatus
           }
         }
       }
@@ -212,6 +218,8 @@ describe("action", () => {
       octokit.graphql.mockResolvedValue({
         repository: {
           pullRequest: {
+            mergeable: "UNKNOWN",
+            mergeStateStatus: "DIRTY",
             reviewRequests: {
               nodes: [
                 { requestedReviewer: null },

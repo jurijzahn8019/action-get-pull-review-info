@@ -48,6 +48,8 @@ interface GqlResult {
       reviews: {
         nodes: GqlReview[];
       };
+      mergeable: string;
+      mergeStateStatus: string;
     };
   };
 }
@@ -127,6 +129,8 @@ export async function run(): Promise<void> {
                 state
               }
             }
+            mergeable
+            mergeStateStatus
           }
         }
       }
@@ -138,6 +142,7 @@ export async function run(): Promise<void> {
     const data = await client.graphql<GqlResult>(params);
     trace("Data: %O", data);
 
+    const { mergeable, mergeStateStatus } = data.repository.pullRequest;
     const requested = data.repository.pullRequest.reviewRequests?.nodes || [];
     const reviews = (data.repository.pullRequest.reviews?.nodes || []).map(
       (r) => ({
@@ -181,6 +186,12 @@ export async function run(): Promise<void> {
     setOutput("reviews", lasts.length);
     info(`Requested Remaining: ${requested.length}`);
     setOutput("requested", requested.length);
+
+    const isMergeable = mergeable === "MERGEABLE";
+    info(`Pull request mergeable: ${isMergeable}`);
+    setOutput("isMergeable", isMergeable);
+    info(`Pull request merge State: ${mergeStateStatus}`);
+    setOutput("merge_state", mergeStateStatus);
 
     Object.entries(res).forEach(([state, revs]) => {
       info(`${state}: ${revs.length}`);
