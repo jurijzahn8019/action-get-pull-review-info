@@ -87722,7 +87722,7 @@ async function run() {
         if (!owner || !repo || !number) {
             throw new Error("Failed to retrieve required parameters");
         }
-        const client = getOctokit_1(token);
+        const client = getOctokit_1(token, { previews: ["merge-info"] });
         dbg("Build query");
         const query = `
       query ($owner: String!, $repo: String!, $number: Int!) {

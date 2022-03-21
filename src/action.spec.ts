@@ -101,7 +101,9 @@ describe("action", () => {
       expect(getInputMock).toHaveBeenNthCalledWith(1, "token", {
         required: true,
       });
-      expect(getOctokitMock).toHaveBeenCalledWith("THE TOKEN");
+      expect(getOctokitMock).toHaveBeenCalledWith("THE TOKEN", {
+        previews: ["merge-info"],
+      });
       expect(octokit.graphql).toHaveBeenCalledWith({
         number: 743,
         owner: "otto-ec",

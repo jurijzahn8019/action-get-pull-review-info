@@ -106,7 +106,7 @@ export async function run(): Promise<void> {
       throw new Error("Failed to retrieve required parameters");
     }
 
-    const client = getOctokit(token);
+    const client = getOctokit(token, { previews: ["merge-info"] });
 
     dbg("Build query");
     const query = `
