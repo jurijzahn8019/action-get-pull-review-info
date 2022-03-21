@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.65](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.64...v0.0.65) (2022-03-21)
+
+
+### Bug Fixes
+
+* **action:** add missing preview flag ([1617983](https://github.com/jurijzahn8019/action-get-pull-review-info/commit/1617983ca307e8fab6e007de72f6d5629a660bee))
+
 ### [0.0.64](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.63...v0.0.64) (2022-03-18)
 
 
