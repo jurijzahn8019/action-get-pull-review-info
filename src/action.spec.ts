@@ -112,7 +112,7 @@ describe("action", () => {
       query ($owner: String!, $repo: String!, $number: Int!) {
         repository(owner: $owner, name: $repo) {
           pullRequest(number: $number) {
-            reviewRequests(first: 50) {
+            reviewRequests(last: 100) {
               nodes {
                 requestedReviewer {
                   ... on User { name: login }
@@ -120,7 +120,7 @@ describe("action", () => {
                 }
               }
             }
-            reviews(first: 50) {
+            reviews(last: 100) {
               nodes {
                 author { name: login }
                 updatedAt
@@ -171,7 +171,7 @@ describe("action", () => {
       query ($owner: String!, $repo: String!, $number: Int!) {
         repository(owner: $owner, name: $repo) {
           pullRequest(number: $number) {
-            reviewRequests(first: 50) {
+            reviewRequests(last: 100) {
               nodes {
                 requestedReviewer {
                   ... on User { name: login }
@@ -179,7 +179,7 @@ describe("action", () => {
                 }
               }
             }
-            reviews(first: 50) {
+            reviews(last: 100) {
               nodes {
                 author { name: login }
                 updatedAt
