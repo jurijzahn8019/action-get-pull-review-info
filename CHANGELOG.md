@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.68](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.67...v0.0.68) (2022-04-08)
+
+
+### Bug Fixes
+
+* **action:** change result limit to max 100 ([8de6114](https://github.com/jurijzahn8019/action-get-pull-review-info/commit/8de61145c1b982cf9173fe852de6f8a2a5913680))
+
 ### [0.0.67](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.66...v0.0.67) (2022-04-04)
 
 ### [0.0.66](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.65...v0.0.66) (2022-03-28)
