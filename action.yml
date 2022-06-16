@@ -134,5 +134,5 @@ outputs:
     description: Detail status by Author Association
 
 runs:
-  using: "node12"
-  main: "dist/index.cjs.js"
+  using: node16
+  main: dist/index.js
