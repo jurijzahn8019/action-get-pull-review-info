@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.79](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.78...v0.0.79) (2022-06-20)
+
+
+### Features
+
+* **action:** migrate to ncc, node16 ([68b222a](https://github.com/jurijzahn8019/action-get-pull-review-info/commit/68b222a74c3d52fb938306e9136d2c8b677f8af1))
+
 ### [0.0.78](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.77...v0.0.78) (2022-06-13)
 
 ### [0.0.77](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.76...v0.0.77) (2022-06-06)
