@@ -30102,7 +30102,7 @@ var ReviewState;
     ReviewState["COMMENTED"] = "COMMENTED";
     ReviewState["DISMISSED"] = "DISMISSED";
     ReviewState["PENDING"] = "PENDING";
-})(ReviewState = exports.ReviewState || (exports.ReviewState = {}));
+})(ReviewState || (exports.ReviewState = ReviewState = {}));
 var CommentAuthorAssociation;
 (function (CommentAuthorAssociation) {
     CommentAuthorAssociation["COLLABORATOR"] = "COLLABORATOR";
@@ -30112,7 +30112,7 @@ var CommentAuthorAssociation;
     CommentAuthorAssociation["MEMBER"] = "MEMBER";
     CommentAuthorAssociation["OWNER"] = "OWNER";
     CommentAuthorAssociation["NONE"] = "NONE";
-})(CommentAuthorAssociation = exports.CommentAuthorAssociation || (exports.CommentAuthorAssociation = {}));
+})(CommentAuthorAssociation || (exports.CommentAuthorAssociation = CommentAuthorAssociation = {}));
 async function run() {
     var _a, _b;
     dbg("Retrieve pull request info");
