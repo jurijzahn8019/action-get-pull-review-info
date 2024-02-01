@@ -137,12 +137,12 @@ describe("action", () => {
       });
 
       expect(infoMock.mock.calls.map((c) => c.join(", "))).toMatchSnapshot(
-        "Info"
+        "Info",
       );
       expect(setOutputMock.mock.calls.map((c) => c.join(", "))).toMatchSnapshot(
-        "setOutput"
+        "setOutput",
       );
-      expect(setFailedMock).not.toBeCalled();
+      expect(setFailedMock).not.toHaveBeenCalled();
     });
 
     it("Should fail due to missing input", async () => {
@@ -151,7 +151,7 @@ describe("action", () => {
       await expect(run()).resolves.toBeUndefined();
 
       expect(setFailedMock).toHaveBeenCalledWith(
-        "Failed to retrieve required parameters"
+        "Failed to retrieve required parameters",
       );
     });
 
@@ -195,9 +195,9 @@ describe("action", () => {
     `,
       });
 
-      expect(setFailedMock).not.toBeCalled();
+      expect(setFailedMock).not.toHaveBeenCalled();
       expect(setOutputMock.mock.calls.map((c) => c.join(", "))).toMatchSnapshot(
-        "setOutput"
+        "setOutput",
       );
     });
 
@@ -210,9 +210,9 @@ describe("action", () => {
 
       await expect(run()).resolves.toBeUndefined();
 
-      expect(setFailedMock).not.toBeCalled();
+      expect(setFailedMock).not.toHaveBeenCalled();
       expect(setOutputMock.mock.calls.map((c) => c.join(", "))).toMatchSnapshot(
-        "setOutput"
+        "setOutput",
       );
     });
 
@@ -286,9 +286,9 @@ describe("action", () => {
 
       await expect(run()).resolves.toBeUndefined();
 
-      expect(setFailedMock).not.toBeCalled();
+      expect(setFailedMock).not.toHaveBeenCalled();
       expect(setOutputMock.mock.calls.map((c) => c.join(", "))).toMatchSnapshot(
-        "setOutput"
+        "setOutput",
       );
     });
   });

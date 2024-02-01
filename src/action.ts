@@ -96,7 +96,7 @@ export async function run(): Promise<void> {
     const collaborators =
       collaborators_array.length > 0
         ? Object.values(CommentAuthorAssociation).filter((a) =>
-            collaborators_input.includes(a)
+            collaborators_input.includes(a),
           )
         : Object.values(CommentAuthorAssociation);
 
@@ -148,7 +148,7 @@ export async function run(): Promise<void> {
       (r) => ({
         ...r,
         updatedAt: Date.parse(r.updatedAt),
-      })
+      }),
     );
 
     const byName: Record<string, Review[]> = {};
@@ -158,7 +158,7 @@ export async function run(): Promise<void> {
       // Only perocess reviews if the author was not rerequested
       .filter(
         (r) =>
-          !requested.find((rq) => rq.requestedReviewer?.name === r.author.name)
+          !requested.find((rq) => rq.requestedReviewer?.name === r.author.name),
       )
       .forEach((r) => {
         if (!byName[r.author.name]) {
@@ -204,7 +204,7 @@ export async function run(): Promise<void> {
       });
 
       const bycols = revs.filter((r) =>
-        collaborators.includes(r.authorAssociation)
+        collaborators.includes(r.authorAssociation),
       ).length;
 
       info(`${state} for Allowed Collaborators: ${bycols}`);

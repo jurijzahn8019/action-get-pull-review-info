@@ -37,13 +37,14 @@ module.exports =
             "style",
             "refactor",
             "revert",
-            "test"
+            "test",
+            "ci",
           ]
         ],
         "type-case": [2, "always", "lower-case"],
         "type-empty": [2, "never"],
         "type-max-length": [2, "always", Infinity],
-        "type-min-length": [2, "always", 3]
+        "type-min-length": [2, "always", 2]
       }
     }
     : {

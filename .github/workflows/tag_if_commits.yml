@@ -5,9 +5,12 @@ on:
     - cron: '0 18 * * 1'
   repository_dispatch:
     types: [tag-if-commits]
-
-  # For Testing
-  # push: { branches: [main] }
+  workflow_dispatch:
+    inputs:
+      release:
+        description: set to true in order to force taggin
+        required: false
+        type: boolean
 
 jobs:
   tag-if-commits:
@@ -33,7 +36,7 @@ jobs:
 
       - name: Build Action code
         id: builder
-        if: steps.checker.outputs.commits > 0
+        if: ${{ inputs.release || steps.checker.outputs.commits > 0 }}
         run: |
           npm ci
           npm run build
