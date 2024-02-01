@@ -134,5 +134,5 @@ outputs:
     description: Detail status by Author Association
 
 runs:
-  using: node16
+  using: node20
   main: dist/index.js
