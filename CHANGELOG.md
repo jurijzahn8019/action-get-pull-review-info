@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.113...v0.1.0) (2024-02-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **action:** use node 20
+
+### Features
+
+* **action:** use node 20 ([62b5032](https://github.com/jurijzahn8019/action-get-pull-review-info/commit/62b5032071f5ec25f07e5725c40338103fa35540))
+
 ### [0.0.113](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.112...v0.0.113) (2023-02-13)
 
 ### [0.0.112](https://github.com/jurijzahn8019/action-get-pull-review-info/compare/v0.0.111...v0.0.112) (2023-02-06)
