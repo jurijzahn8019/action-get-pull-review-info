@@ -12,16 +12,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
+      - uses: actions/checkout@v4
+      - name: Use Node.js lts/*
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: lts/*
           cache: npm
       - name: Npm Install
         run: npm ci
@@ -37,7 +33,7 @@ jobs:
           CI: true
 
       - name: Upload coverage
-        uses: coverallsapp/github-action@v1.2.4
+        uses: coverallsapp/github-action@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./tmp/coverage/lcov.info
