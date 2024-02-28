@@ -34,7 +34,7 @@
     "encoding": "^0.1.13"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.6.1",
+    "@commitlint/cli": "^19.0.1",
     "@octokit/types": "^12.6.0",
     "@types/debug": "^4.1.12",
     "@types/jest": "^29.5.12",
